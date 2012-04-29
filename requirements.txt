@@ -19,6 +19,7 @@ django-model-utils
 PIL
 lxml
 sorl-thumbnail
+django-queued-storage
 django-friendship
 
 -e git+git@github.com:toastdriven/django-tastypie.git@perms#egg=django_tastypie-dev

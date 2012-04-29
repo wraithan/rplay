@@ -6,8 +6,8 @@ from fabric.api import abort, env, local, settings, task
 
 
 ########## GLOBALS
-env.run = 'heroku run python replayswithfriends/manage.py'
-env.settings = 'settings.prod'
+env.run = 'heroku run python manage.py'
+env.settings = 'replayswithfriends.settings.prod'
 
 HEROKU_STACK = 'cedar'
 HEROKU_ADDONS = (
