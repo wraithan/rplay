@@ -1,0 +1,22 @@
+{% extends "site_base.html" %}
+{% load staticfiles pagination_tags %}
+{% load url from future %}
+
+{% block head_title %}{{ object }} {{ block.super }}{% endblock %}
+
+{% block body %}
+<div class="span9">
+    {% autopaginate object_list %}
+    <h1>Latest Matches</h1>
+    <table class="table">
+        <tr><th>Players</th><th>Map</th><th>Time</th></tr>
+    {% for o in object_list %}
+        <tr><td><a href="{% url 'match_detail' o.id %}">{{ o }}</a></td><td>{{ o.mapfield }}</td><td>{{ o.time_display }}</td></tr>
+    {% endfor %}
+    </table>
+
+</div>
+<div class="row span9">
+    {% paginate %}
+</div>
+{% endblock %}

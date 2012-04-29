@@ -1,0 +1,10 @@
+*.py[co]
+*.egg*
+*.swp
+*~
+build
+*.db
+celerybeat-schedule
+.DS_Store
+media
+static

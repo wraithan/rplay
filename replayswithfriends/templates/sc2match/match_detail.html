@@ -1,0 +1,27 @@
+{% extends "site_base.html" %}
+{% load staticfiles %}
+
+{% block head_title %}{{ object }} {{ block.super }}{% endblock %}
+
+{% block body %}
+<div class="span9">
+    <a href="{{ object.replay_file.url }}" class="btn btn-success btn-big"><i class="icon-film icon-white"></i> Download Replay</a>
+    <h3>{{ object.mapfield }} in {{ object.time_display }}</h3>
+    <table class="table">
+        <tr><th>Outcome</th><th>Player</th><th>Race</th><th>Tags</th></tr>
+        {% for p in object.players.all %}
+        <tr>
+            <td>{% if p.result %}<i class="icon-star" title="win"></i>{% endif %}</td>
+            <td>{{ p.player.username }}</td>
+            <td>{{ p.race }}</td>
+            <td>
+                {% if p.is_observer %}<i class="icon-eye-open" title="observer"></i>{% endif %}
+                {% if p.random %}<i class="icon-question-sign" title="random"></i>{% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+<div class="span3">
+</div>
+{% endblock %}

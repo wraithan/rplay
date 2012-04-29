@@ -1,0 +1,26 @@
+{% extends "site_base.html" %}
+{% load staticfiles %}
+{% load url from future %}
+
+{% block head_title %}{{ object }} {{ block.super }}{% endblock %}
+
+{% block body %}
+<div class="span9">
+    <h1>GL HF!</h1>
+    <h2>R-Play is a place to share replays with friends.</h2>
+    <p>Right now you can add your friends and upload replays. Soon you'll be
+        able to run a background process to watch your replay folder.
+    </p>
+    <h3>Features</h3>
+    <ul>
+        <li class="">Starcraft II Support</li>
+        <li class="">Replys can be public, private, or shared with friends or followers
+        <li class="">Upload batches on the <a href="/sc2/match/upload/">Upload</a> page
+        <li class="">Invite your friends</li>
+        <li class="">Stats on your best and worst maps and matchups</li>
+    </ul>
+</div>
+<div class="span3">
+
+</div>
+{% endblock %}

@@ -1,0 +1,85 @@
+{% load compress staticfiles %}
+
+<!--[if lt IE 9]><script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE9.js"></script><![endif]-->
+{% if not debug %}
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js" type="text/javascript"></script>
+{% endif %}
+
+<script type="text/javascript">
+var MEDIA_URL = {{ MEDIA_URL }},
+    STATIC_URL = {{ STATIC_URL }},
+    MESSAGES = [
+        {% for message in messages %}
+        {tags: "{{ message.tags }}", message: "{{ message }}"}{% if not forloop.last %},{% endif %}
+        {% endfor %}
+    ]
+
+// Fallback in case the user is offline or Google's CDN is unavailable.
+if (typeof(jQuery) === 'undefined')
+{
+    document.write(unescape("%3Cscript src='{% static "js/jquery-1.7.2.min.js" %}' type='text/javascript'%3E%3C/script%3E"));
+}
+</script>
+
+{% compress js %}
+<script type="text/javascript" src="{% static 'js/fittext.js' %}"></script>
+<script type="text/javascript">
+// Anonymous inline execution to hide from global scope and control $ variable
+(function ($) {
+    $.fn.equalHeight = function() {
+        $(this).each(function(){
+            var tallest = 0,
+                children = $(this).children();
+            children.each(function(i){
+                var current = $(this).height();
+                tallest = current > tallest ? current : tallest;
+            });
+            children.height(tallest);
+        });
+        return this;
+    };
+
+    // Comply with Django's AJAX CSRF protection
+    $('html').ajaxSend(function(event, xhr, settings) {
+        function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie != '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = jQuery.trim(cookies[i]);
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+            // Only send the token to relative URLs i.e. locally.
+            xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+        }
+    });
+
+    $(function () {
+        // If we're dealing with forms on the page, focus the first required field
+        $('input[required]:first').focus();
+        $("h1.intro").fitText(1);
+    });
+
+
+    var $notifications = $('#notifications');
+    $notifications.hide();
+
+    if ($notifications.find('.messages').children().length) {
+        $notifications.slideDown(1000);
+    }
+    $notifications.find('.dismiss').click(function (evt) {
+        $notifications.slideUp(500, function () {
+            $notifications.find('.messages').empty();
+        });
+    });
+}(jQuery));
+</script>
+{% endcompress %}
