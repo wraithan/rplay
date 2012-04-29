@@ -101,12 +101,18 @@ def bootstrap():
 
 
 @task
+def compress():
+    local("python manage.py collectstatic --noinput --settings=%s" % env.settings)
+    local("python manage.py compress --settings=%s" % env.settings)
+
+@task
 def deploy():
     cont('git push heroku master',
             "Couldn't push your application to Heroku, continue anyway?")
     syncdb()
     migrate()
     collectstatic()
+    compress()
 
 @task
 def destroy():
