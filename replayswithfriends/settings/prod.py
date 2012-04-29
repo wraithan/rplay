@@ -9,6 +9,7 @@ from S3 import CallingFormat
 
 from common import *
 
+DEBUG = False
 
 # Helper lambda for gracefully degrading environmental variables:
 env = lambda e, d: environ[e] if environ.has_key(e) else d
