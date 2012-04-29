@@ -125,7 +125,7 @@ LOGGING = {
 
 # See: http://django-storages.readthedocs.org/en/latest/backends/amazon-S3.html#settings
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+STATICFILES_STORAGE = DEFAULT_FILE_STORAGE
 
 AWS_CALLING_FORMAT = CallingFormat.SUBDOMAIN
 
@@ -137,6 +137,7 @@ AWS_STORAGE_BUCKET_NAME = env('AWS_STORAGE_BUCKET_NAME', 'r-play')
 STATIC_URL = 'https://%s.s3.amazonaws.com/' % AWS_STORAGE_BUCKET_NAME
 MEDIA_URL = 'https://%s.s3.amazonaws.com/' % AWS_STORAGE_BUCKET_NAME
 COMPRESS_URL = STATIC_URL
+CMPRESS_STORAGE = DEFAULT_FILE_STORAGE
 COMPRESS_OFFLINE = True
 
 SECRET_KEY = environ.get('SECRET_KEY', SECRET_KEY)
