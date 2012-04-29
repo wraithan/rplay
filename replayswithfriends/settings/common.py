@@ -3,6 +3,7 @@ from os.path import abspath, basename, dirname, join, normpath
 
 
 DJANGO_ROOT = dirname(dirname(abspath(__file__)))
+PROJ_ROOT = join(DJANGO_ROOT, "replayswithfriends")
 SITE_ROOT = dirname(DJANGO_ROOT)
 
 SITE_NAME = basename(DJANGO_ROOT)
@@ -39,9 +40,9 @@ USE_I18N = True
 USE_L10N = True
 
 
-MEDIA_ROOT = normpath(join(DJANGO_ROOT, 'packaged', 'media'))
+MEDIA_ROOT = normpath(join(PROJ_ROOT, 'packaged', 'media'))
 MEDIA_URL = '/media/'
-STATIC_ROOT = normpath(join(DJANGO_ROOT, 'packaged', 'static'))
+STATIC_ROOT = normpath(join(PROJ_ROOT, 'packaged', 'static'))
 STATIC_URL = '/static/'
 ADMIN_MEDIA_PREFIX = '/static/admin/'
 COMPRESS_ROOT = STATIC_ROOT

@@ -123,6 +123,29 @@ LOGGING = {
     },
 }
 
+MEDIA_ROOT = normpath(join(DJANGO_ROOT, "replayswithfriends", 'packaged', 'media'))
+MEDIA_URL = '/media/'
+STATIC_ROOT = normpath(join(DJANGO_ROOT, "replayswithfriends", 'packaged', 'static'))
+STATIC_URL = '/static/'
+ADMIN_MEDIA_PREFIX = '/static/admin/'
+COMPRESS_ROOT = STATIC_ROOT
+COMPRESS_ENABLED = True
+COMPRESS_OFFLINE = True
+COMPRESS_URL = STATIC_URL
+COMPRESS_PARSER = 'compressor.parser.LxmlParser'
+COMPRESS_PRECOMPILERS = [
+    ('text/less', 'lessc {infile} {outfile}'),
+]
+
+STATICFILES_DIRS = [
+    normpath(join(DJANGO_ROOT, "replayswithfriends", 'static')),
+]
+STATICFILES_FINDERS = [
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'compressor.finders.CompressorFinder',
+]
+
 # See: http://django-storages.readthedocs.org/en/latest/backends/amazon-S3.html#settings
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
