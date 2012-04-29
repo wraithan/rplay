@@ -61,10 +61,9 @@ CACHES = {
 
 
 ########## CELERY CONFIGURATION
-BROKER_TRANSPORT = 'amqplib'
-BROKER_URL = env('RABBITMQ_URL', '')
-CELERY_RESULT_BACKEND = 'amqp'
-CELERY_TASK_RESULT_EXPIRES = 60 * 60 * 5
+BROKER_URL = 'redis://redistogo:ec07a0173994aab43a457a6c6c9a761c@herring.redistogo.com:9920/'
+CELERY_RESULT_BACKEND = "redis://redistogo:ec07a0173994aab43a457a6c6c9a761c@herring.redistogo.com:9920/"
+CELERY_TASK_RESULT_EXPIRES = 60 * 60
 ########## END CELERY CONFIGURATION
 
 

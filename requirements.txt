@@ -3,7 +3,7 @@ Fabric==1.4.1
 South==0.7.4
 Sphinx==1.1.3
 boto==2.3.0
-django-celery==2.5.5
+django-celery-with-redis
 django-compressor==1.1.2
 django-debug-toolbar==0.9.4
 django-htmlmin==0.5.1
