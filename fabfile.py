@@ -110,6 +110,14 @@ def bootstrap():
 
 
 @task
+def deploy():
+    cont('git push heroku master',
+            "Couldn't push your application to Heroku, continue anyway?")
+    syncdb()
+    migrate()
+
+
+@task
 def destroy():
     """Destroy this Heroku application. Wipe it from existance.
 
