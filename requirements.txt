@@ -11,7 +11,6 @@ django-kombu==0.9.4
 django-pylibmc-sasl==0.2.4
 django-storages==1.1.4
 gunicorn==0.14.2
-newrelic==1.2.1.265
 psycopg2==2.4.2
 pylibmc==1.2.3
 raven==1.7.5

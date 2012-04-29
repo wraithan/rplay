@@ -13,12 +13,7 @@ HEROKU_STACK = 'cedar'
 HEROKU_ADDONS = (
     'shared-database:5mb',
     'pgbackups:auto-month',
-    'newrelic:standard',
     'scheduler:standard',
-    'loggly:mole',
-    'statsmix:developer',
-    'custom_domains:basic',
-    'zerigo_dns:basic',
     'memcache:5mb',
     'rabbitmq', # Currently in BETA.
 )
@@ -90,7 +85,6 @@ def bootstrap():
         - Install all ``HEROKU_ADDONS``.
         - Sync the database.
         - Apply all database migrations.
-        - Initialize New Relic's monitoring add-on.
     """
     cont('heroku create --stack %s' % HEROKU_STACK,
             "Couldn't create the Heroku app, continue anyway?")
@@ -104,9 +98,6 @@ def bootstrap():
 
     syncdb()
     migrate()
-
-    cont('%(run)s newrelic-admin validate-config - stdout' % env,
-            "Couldn't initialize New Relic, continue anyway?")
 
 
 @task
