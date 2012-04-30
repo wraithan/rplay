@@ -45,7 +45,7 @@ class MatchList(ListView):
 
 
 class MatchUpload(CreateView):
-    success_url = '/sc2/match/upload/done/'
+    success_url = '/sc2/match/upload/'
     form_class = MatchUploadForm
     template_name = 'sc2match/upload.html'
     queryset = Match.objects.all()
