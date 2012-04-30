@@ -76,7 +76,8 @@ CACHES = {
             'DB': 0,
             'HOST': REDIS_HOST,
             'PORT': REDIS_PORT,
-            'PASSWORD': REDIS_PASSWORD
+            'PASSWORD': REDIS_PASSWORD,
+            'max_connections': 2,
         },
     },
 }
