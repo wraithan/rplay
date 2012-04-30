@@ -47,18 +47,6 @@ try:
 except:
     print "Unexpected error:", exc_info()
 
-CACHES = {
-    'default': {
-        'BACKEND': 'django_pylibmc.memcached.PyLibMCCache',
-        'LOCATION': 'localhost:11211',
-        'TIMEOUT': 500,
-        'BINARY': True,
-        'OPTIONS': {
-            'tcp_nodelay': True,
-            'ketama': True,
-        }
-    }
-}
 
 
 ########## CELERY CONFIGURATION
@@ -78,6 +66,15 @@ import djcelery
 djcelery.setup_loader()
 
 
+CACHES = {
+    'default': {
+        'BACKEND': 'redis_cache.RedisCache',
+        'LOCATION': '%s:%s' % (REDIS_HOST, REDIS_PORT),
+        'OPTIONS': {
+            'DB': 0,
+        },
+    },
+}
 
 INSTALLED_APPS += [
     'storages',
