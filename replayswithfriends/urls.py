@@ -1,5 +1,6 @@
 from django.conf.urls.defaults import patterns, include, url
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from django.http import HttpResponse
 
 from django.contrib import admin
 admin.autodiscover()
@@ -9,6 +10,7 @@ from replayswithfriends.profiles.views import ProfileList, ProfileDetail
 
 urlpatterns = patterns('',
     url(r'^dj/', include(admin.site.urls)),
+    url(r'^favicon.ico$', lambda request: HttpResponse('')),
     url(r'^$', 'django.views.generic.simple.direct_to_template', {'template': 'home.html'}, name="home"),
     url(r'^invites/', include('privatebeta.urls')),
     url(r'^players/$', ProfileList.as_view(), name="player_list"),

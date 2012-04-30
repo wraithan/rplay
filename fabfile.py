@@ -115,6 +115,12 @@ def deploy():
     compress()
 
 @task
+def light_deploy():
+    cont('git push heroku master',
+            "Couldn't push your application to Heroku, continue anyway?")
+ld = light_deploy
+
+@task
 def destroy():
     """Destroy this Heroku application. Wipe it from existance.
 
