@@ -11,8 +11,7 @@ from friendship.models import Friend, Follow
 
 from queued_storage.backends import QueuedS3BotoStorage
 
-queued_s3storage = QueuedS3BotoStorage(
-    task='queued_storage.tasks.TransferAndDelete')
+queued_s3storage = QueuedS3BotoStorage()
 
 if settings.DEBUG:
     storage_engine = default_storage
