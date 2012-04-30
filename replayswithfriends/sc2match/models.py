@@ -9,14 +9,14 @@ from django.utils import timezone
 from model_utils import Choices
 from friendship.models import Friend, Follow
 
-from queued_storage.backends import QueuedS3BotoStorage
+#from queued_storage.backends import QueuedS3BotoStorage
 
-queued_s3storage = QueuedS3BotoStorage()
+#queued_s3storage = QueuedS3BotoStorage()
 
-if settings.DEBUG:
-    storage_engine = default_storage
-else:
-    storage_engine = queued_s3storage
+#if settings.DEBUG:
+storage_engine = default_storage
+#else:
+#    storage_engine = queued_s3storage
 
 
 SHARE = Choices(
