@@ -6,8 +6,8 @@
 {% endif %}
 
 <script type="text/javascript">
-var MEDIA_URL = {{ MEDIA_URL }},
-    STATIC_URL = {{ STATIC_URL }},
+var MEDIA_URL = '{{ MEDIA_URL }}',
+    STATIC_URL = '{{ STATIC_URL }}',
     MESSAGES = [
         {% for message in messages %}
         {tags: "{{ message.tags }}", message: "{{ message }}"}{% if not forloop.last %},{% endif %}
