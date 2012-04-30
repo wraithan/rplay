@@ -1,4 +1,4 @@
-{% load compress staticfiles %}
+{% load compress %}
 
 <!--[if lt IE 9]><script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE9.js"></script><![endif]-->
 {% if not debug %}
@@ -17,12 +17,12 @@ var MEDIA_URL = {{ MEDIA_URL }},
 // Fallback in case the user is offline or Google's CDN is unavailable.
 if (typeof(jQuery) === 'undefined')
 {
-    document.write(unescape("%3Cscript src='{% static "js/jquery-1.7.2.min.js" %}' type='text/javascript'%3E%3C/script%3E"));
+    document.write(unescape("%3Cscript src='{{ STATIC_URL }}js/jquery-1.7.2.min.js' type='text/javascript'%3E%3C/script%3E"));
 }
 </script>
 
-{% compress js %}
-<script type="text/javascript" src="{% static 'js/fittext.js' %}"></script>
+{# compress js #}
+<script type="text/javascript" src="{{ STATIC_URL }}js/fittext.js"></script>
 <script type="text/javascript">
 // Anonymous inline execution to hide from global scope and control $ variable
 (function ($) {
@@ -82,4 +82,4 @@ if (typeof(jQuery) === 'undefined')
     });
 }(jQuery));
 </script>
-{% endcompress %}
+{# endcompress #}

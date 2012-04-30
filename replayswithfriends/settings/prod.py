@@ -50,12 +50,14 @@ except:
 
 
 ########## CELERY CONFIGURATION
-BROKER_HOST = 'redistogo:ec07a0173994aab43a457a6c6c9a761c@herring.redistogo.com'
+BROKER_HOST = 'herring.redistogo.com'
 BROKER_PORT = 9920
 BROKER_BACKEND = 'redis'
 REDIS_HOST = BROKER_HOST
 REDIS_PORT = BROKER_PORT
 BROKER_VHOST = "0"
+BROKER_PASSWORD = 'ec07a0173994aab43a457a6c6c9a761c'
+REDIS_PASSWORD = 'ec07a0173994aab43a457a6c6c9a761c'
 REDIS_DB = 0
 REDIS_CONNECT_RETRY = True
 CELERY_SEND_EVENTS=True
@@ -72,6 +74,9 @@ CACHES = {
         'LOCATION': '%s:%s' % (REDIS_HOST, REDIS_PORT),
         'OPTIONS': {
             'DB': 0,
+            'HOST': REDIS_HOST,
+            'PORT': REDIS_PORT,
+            'PASSWORD': REDIS_PASSWORD
         },
     },
 }
@@ -147,5 +152,6 @@ MEDIA_URL = 'https://%s.s3.amazonaws.com/' % AWS_STORAGE_BUCKET_NAME
 COMPRESS_URL = STATIC_URL
 CMPRESS_STORAGE = DEFAULT_FILE_STORAGE
 COMPRESS_OFFLINE = False
+COMPRESS_ENABLED = False
 
 SECRET_KEY = environ.get('SECRET_KEY', SECRET_KEY)

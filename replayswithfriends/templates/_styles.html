@@ -1,5 +1,5 @@
-{% load compress staticfiles %}
+{% load compress %}
 
-{% compress css %}
-<link rel="stylesheet" href="{% static 'css/bootstrap-responsive.min.css' %}" type="text/css" />
-{% endcompress %}
+{# compress css #}
+<link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap-responsive.min.css" type="text/css" />
+{# endcompress #}
