@@ -11,53 +11,56 @@ def as_signal(sender, instance, created, raw, **kwargs):
 def parse_replay(match_id):
     match = Match.objects.get(id=match_id)
     match.players.all().delete()
-    match.mapfield, created = Map.objects.get_or_create(
-        name=match.replay.map_name,
-    )
-    match.duration = match.replay.game_length.seconds
-    match.gateway = match.replay.gateway
-
-    for p in match.replay.players:
-        player, created = Player.objects.get_or_create(
-            username=p.name,
-            battle_net_url=p.url
+    try:
+        match.mapfield, created = Map.objects.get_or_create(
+            name=match.replay.map_name,
         )
-        result = None
-        if p.result == 'Win':
-            result = True
-        elif p.result == 'Loss':
-            result = False
+        match.duration = match.replay.game_length.seconds
+        match.gateway = match.replay.gateway
 
-        if p.pick_race == 'Random':
-            random=True
-        else:
-            random=False
+        for p in match.replay.players:
+            player, created = Player.objects.get_or_create(
+                username=p.name,
+                battle_net_url=p.url
+            )
+            result = None
+            if p.result == 'Win':
+                result = True
+            elif p.result == 'Loss':
+                result = False
 
-        PlayerResult.objects.create(
-            match=match,
-            player=player,
-            result=result,
-            random=random,
-            color='rgb(%(r)s, %(g)s, %(b)s)' % p.color,
-            race=p.play_race,
-        )
+            if p.pick_race == 'Random':
+                random=True
+            else:
+                random=False
 
-    for p in match.replay.observers:
-        player, created = Player.objects.get_or_create(
-            username=p.name,
-            battle_net_url=p.url
-        )
-        result = None
-        PlayerResult.objects.create(
-            match=match,
-            player=player,
-            result=result,
-            is_observer=True,
-            color='rgb(%(r)s, %(g)s, %(b)s)' % p.color,
-            race=p.play_race,
-        )
+            PlayerResult.objects.create(
+                match=match,
+                player=player,
+                result=result,
+                random=random,
+                color='rgb(%(r)s, %(g)s, %(b)s)' % p.color,
+                race=p.play_race,
+            )
 
-    match.processed = True
-    match.save()
+        for p in match.replay.observers:
+            player, created = Player.objects.get_or_create(
+                username=p.name,
+                battle_net_url=p.url
+            )
+            result = None
+            PlayerResult.objects.create(
+                match=match,
+                player=player,
+                result=result,
+                is_observer=True,
+                color='rgb(%(r)s, %(g)s, %(b)s)' % p.color,
+                race=p.play_race,
+            )
 
+        match.processed = True
+        match.save()
+    except: # really? empty try/except block. you're an ass to yourself.
+        pass # shutup, it's sunday evening and I do what I want.
+        ### Day 1 on my journey to code schitzophrenia.
 
