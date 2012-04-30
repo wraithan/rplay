@@ -62,10 +62,20 @@ CACHES = {
 
 
 ########## CELERY CONFIGURATION
-BROKER_URL = 'redis://redistogo:ec07a0173994aab43a457a6c6c9a761c@herring.redistogo.com:9920/'
-CELERY_RESULT_BACKEND = "redis://redistogo:ec07a0173994aab43a457a6c6c9a761c@herring.redistogo.com:9920/"
-CELERY_TASK_RESULT_EXPIRES = 60 * 60
-########## END CELERY CONFIGURATION
+BROKER_HOST = 'redistogo:ec07a0173994aab43a457a6c6c9a761c@herring.redistogo.com'
+BROKER_PORT = 9920
+BROKER_BACKEND = 'redis'
+REDIS_HOST = BROKER_HOST
+REDIS_PORT = BROKER_PORT
+BROKER_VHOST = "0"
+REDIS_DB = 0
+REDIS_CONNECT_RETRY = True
+CELERY_SEND_EVENTS=True
+CELERY_RESULT_BACKEND='redis'
+CELERY_TASK_RESULT_EXPIRES =  10
+CELERYBEAT_SCHEDULER="djcelery.schedulers.DatabaseScheduler"
+import djcelery
+djcelery.setup_loader()
 
 
 
