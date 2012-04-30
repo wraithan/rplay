@@ -1,5 +1,4 @@
 from django.db import models
-from django.conf import settings
 from django.core.files.storage import default_storage
 
 from django.contrib.auth.models import User
@@ -10,16 +9,15 @@ from django.utils import timezone
 from model_utils import Choices
 from friendship.models import Friend, Follow
 
-from queued_storage.backends import QueuedStorage
-queued_s3storage = QueuedStorage(
-    'django.core.files.storage.FileSystemStorage',
-    'storages.backends.s3boto.S3BotoStorage'
-)
+#from queued_storage.backends import QueuedS3BotoStorage
 
-if settings.DEBUG:
-    storage_engine = default_storage
-else:
-    storage_engine = queued_s3storage
+#queued_s3storage = QueuedS3BotoStorage(
+#    task='queued_storage.tasks.TransferAndDelete')
+
+#if settings.DEBUG:
+storage_engine = default_storage
+#else:
+#    storage_engine = queued_s3storage
 
 
 SHARE = Choices(
