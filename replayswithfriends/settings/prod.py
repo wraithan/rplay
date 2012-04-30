@@ -61,9 +61,7 @@ REDIS_PASSWORD = 'ec07a0173994aab43a457a6c6c9a761c'
 REDIS_DB = 0
 REDIS_CONNECT_RETRY = True
 CELERY_SEND_EVENTS=True
-CELERY_RESULT_BACKEND='redis'
 CELERY_TASK_RESULT_EXPIRES =  10
-CELERYBEAT_SCHEDULER="djcelery.schedulers.DatabaseScheduler"
 import djcelery
 djcelery.setup_loader()
 
