@@ -1,12 +1,10 @@
 from base64_fields import Base64FileField
-from django.contrib.auth.models import User
-from django.core.paginator import Paginator, InvalidPage
 from django.db.models import Q
 from django.http import Http404
 from tastypie import fields
-from tastypie.authentication import BasicAuthentication, Authentication
-from tastypie.authorization import DjangoAuthorization, Authorization
-from tastypie.resources import Resource, ModelResource, ALL, ALL_WITH_RELATIONS
+from tastypie.authentication import BasicAuthentication
+from tastypie.authorization import Authorization
+from tastypie.resources import ModelResource
 from .models import Match, Map, PlayerResult, Player
 from friendship.models import Friend, Follow
 
@@ -24,8 +22,9 @@ class PlayerResource(ModelResource):
         resource_name = "player"
         api_name = "player"
         always_return_data = True
+        allowed_methods = ['get']
         authorization = Authorization()
-        authentication = Authentication()
+        authentication = BasicAuthentication()
 
 
 class MapResource(ModelResource):
@@ -37,11 +36,14 @@ class MapResource(ModelResource):
         resource_name = "map"
         api_name = "map"
         always_return_data = True
+        allowed_methods = ['get']
         authorization = Authorization()
-        authentication = Authentication()
+        authentication = BasicAuthentication()
+
 
 
 class PlayerResultResource(ModelResource):
+    player = fields.ToOneField(PlayerResource, 'player', null=True)
 
     def get_object_list(self, request):
         return super(PlayerResultResource, self).get_object_list(request).filter(
@@ -54,22 +56,37 @@ class PlayerResultResource(ModelResource):
         queryset = PlayerResult.objects.all()
         resource_name = "player_result"
         api_name = "player_result"
+        allowed_methods = ['get']
         always_return_data = True
         authorization = Authorization()
-        authentication = Authentication()
+        authentication = BasicAuthentication()
+
 
 
 class MatchResource(ModelResource):
     replay_file = Base64FileField("replay_file", null=True)
+    mapfield = fields.ToOneField(MapResource, "mapfield", null=True, full=True)
+    players = fields.ToManyField(PlayerResultResource, 'players', null=True, full=True)
+
+    def hydrate(self, bundle):
+        super(MatchResource, self).hydrate(bundle)
+        if bundle.obj.pk:
+            if bundle.obj.owner != bundle.request.user:
+                raise Http404 ### BETTER API NEEDED
+
+        bundle.obj.owner = bundle.request.user
+        return bundle
+
 
     def get_object_list(self, request):
-        return Match.share.available()
+        return Match.share.available(request.user)
 
     class Meta:
         queryset = Match.objects.all()
         resource_name = "match"
         api_name = "match"
-        allowed_methods = ['post', 'get', 'patch', 'put', 'delete']
+        allowed_methods = ['post', 'get']
         always_return_data = False
         authorization = Authorization()
-        authentication = Authentication()
+        authentication = BasicAuthentication()
+

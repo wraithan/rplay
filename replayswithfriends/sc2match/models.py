@@ -97,7 +97,7 @@ class ShareManager(models.Manager):
         following = Follow.objects.following(to_user)
         friends = Friend.objects.friends(to_user)
 
-        return self.get_query_set().filter(
+        return self.get_query_set().filter(processed=True).filter(
             models.Q(match_share=SHARE.PUBLIC)
             | models.Q(match_share=SHARE.FRIENDS, owner__in=friends)
             | models.Q(match_share=SHARE.FOLLOWERS, owner__in=following)
@@ -136,7 +136,7 @@ class Match(models.Model):
 
     def __unicode__(self):
         if self.processed:
-            return "%s" % ", ".join(self.players.all().values_list('player__username', flat=True).order_by("?"))
+            return "%s" % ", ".join(self.players.all().values_list('player__username', flat=True).order_by("player__username"))
         else:
             return "unprocessed match %s" % self.created
 
@@ -161,7 +161,6 @@ class Match(models.Model):
         else:
             return '-'
 
-
     @property
     def winners(self):
         return self.players.filter(result=True)
@@ -169,7 +168,6 @@ class Match(models.Model):
     @property
     def losers(self):
         return self.players.filter(result=False)
-
 
     def save(self, *args, **kwargs):
         self.modified = timezone.now()

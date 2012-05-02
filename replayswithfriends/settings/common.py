@@ -102,11 +102,6 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'pagination.middleware.PaginationMiddleware',
-    'privatebeta.middleware.PrivateBetaMiddleware',
-]
-
-PRIVATEBETA_ALWAYS_ALLOW_VIEWS = [
-    'django.views.generic.simple.direct_to_template'
 ]
 
 ROOT_URLCONF = '%s.urls' % SITE_NAME
@@ -129,7 +124,6 @@ INSTALLED_APPS = [
     'queued_storage',
     'south',
     'pagination',
-    'privatebeta',
 
     'replayswithfriends.profiles',
     'replayswithfriends.sc2match',

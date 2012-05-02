@@ -1,12 +1,9 @@
-from base64_fields import Base64FileField
 from django.contrib.auth.models import User
-from django.core.paginator import Paginator, InvalidPage
-from django.http import Http404
-from tastypie import fields
-from tastypie.authentication import BasicAuthentication, Authentication
-from tastypie.authorization import DjangoAuthorization, Authorization
-from tastypie.resources import Resource, ModelResource, ALL, ALL_WITH_RELATIONS
+from tastypie.authentication import BasicAuthentication
+from tastypie.authorization import DjangoAuthorization
+from tastypie.resources import ModelResource
 from friendship.models import Friend, Follow
+from .models import Profile
 
 
 class UserResource(ModelResource):
@@ -17,22 +14,22 @@ class UserResource(ModelResource):
     """
     def obj_get_list(self, request, *args, **kwargs):
         if request.user.is_authenticated():
-            return Following.objects.followers(request.user)
+            return User.objects.filter(
+                id__in=[set(
+                    Follow.objects.followers(request.user).values_list('id', flat=True),
+                    Friend.objects.friends(request.user).values_list('id', flat=True),
+                    profile__profile_share=Profile.SHARE.PUBLIC
+                )])
 
         return User.objects.none()
-
-    def obj_create(self, bundle, *args, **kwargs):
-        bundle = super(UserResource, self).obj_create(bundle, password="!", *args, **kwargs)
-        bundle.obj.set_password(bundle.data['password'])
-        bundle.obj.save()
-        return bundle
 
     class Meta:
         queryset = User.objects.all()
         resource_name = "user"
         api_name = "user"
-        allowed_methods = ['post', 'get']
+        allowed_methods = ['get']
         fields = ['first_name', 'last_name', 'username', 'email', 'id', 'last_login']
         always_return_data = True
-        authorization = Authorization()
-        authentication = Authentication()
+        authorization = DjangoAuthorization()
+        authentication = BasicAuthentication()
+

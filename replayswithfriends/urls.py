@@ -7,6 +7,14 @@ admin.autodiscover()
 
 from replayswithfriends.profiles.views import ProfileList, ProfileDetail
 
+from tastypie.api import Api
+from replayswithfriends.sc2match.api import MapResource, MatchResource, PlayerResource, PlayerResultResource
+
+v1_api = Api(api_name='v1')
+v1_api.register(MapResource())
+v1_api.register(MatchResource())
+v1_api.register(PlayerResource())
+v1_api.register(PlayerResultResource())
 
 urlpatterns = patterns('',
     url(r'^dj/', include(admin.site.urls)),
@@ -17,6 +25,7 @@ urlpatterns = patterns('',
     url(r'^players/', include('replayswithfriends.profiles.backends.urls')),
     url(r'^players/(?P<id>[\w0-9\.\-]+)/$', ProfileDetail.as_view(), name="profile_detail"),
     url(r'^sc2/', include('replayswithfriends.sc2match.urls')),
+    (r'^api/', include(v1_api.urls)),
 )
 
 urlpatterns += staticfiles_urlpatterns()
