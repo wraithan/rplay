@@ -13,7 +13,7 @@ class ProfileDetail(DetailView):
             return Profile.objects.filter(
                 Q(user__in=Friend.objects.friends(self.request.user))
                 | Q(user__in=Follow.objects.following(self.request.user))
-                | Q(default_profile_share=Profile.SHARE.PUBLIC)
+                | Q(profile_share=Profile.SHARE.PUBLIC)
             )
         return Profile.objects.filter(default_profile_share=Profile.SHARE.PUBLIC)
 
@@ -26,6 +26,6 @@ class ProfileList(ListView):
             return Profile.objects.filter(
                 Q(user__in=Friend.objects.friends(self.request.user))
                 | Q(user__in=Follow.objects.following(self.request.user))
-                | Q(default_profile_share=Profile.SHARE.PUBLIC)
+                | Q(profile_share=Profile.SHARE.PUBLIC)
             )
         return Profile.objects.filter(default_profile_share=Profile.SHARE.PUBLIC)

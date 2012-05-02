@@ -21,9 +21,9 @@ storage_engine = default_storage
 
 SHARE = Choices(
     (0, 'PUBLIC', _("Public")),
-    (1, 'FRIENDS', _("Public")),
+    (1, 'FRIENDS', _("Friends")),
     (2, 'FOLLOWERS', _("Followers")),
-    (3, 'PRIVATE', _("Public")),
+    (3, 'PRIVATE', _("Private")),
 )
 
 REGIONS = Choices(
