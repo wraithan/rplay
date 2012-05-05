@@ -11,11 +11,15 @@ def as_signal(sender, instance, created, raw, **kwargs):
 def parse_replay(match_id):
     match = Match.objects.get(id=match_id)
     match.players.all().delete()
-
+    errors = []
     try:
-        match.mapfield, created = Map.objects.get_or_create(
-            name=match.replay.map_name,
-        )
+        try:
+            match.mapfield, created = Map.objects.get_or_create(
+                name=match.replay.map_name,
+            )
+        except AttributeError:
+            errors.append('Map Not Found in replay, but %s' % match.replay.map)
+
         match.duration = match.replay.game_length.seconds
         match.gateway = match.replay.gateway
 
@@ -45,22 +49,30 @@ def parse_replay(match_id):
             )
 
         for p in match.replay.observers:
-            player, created = Player.objects.get_or_create(
-                username=p.name,
-                battle_net_url=p.url
-            )
-            result = None
-            PlayerResult.objects.create(
-                match=match,
-                player=player,
-                result=result,
-                is_observer=True,
-                color='rgb(%(r)s, %(g)s, %(b)s)' % p.color,
-                race=p.play_race,
-            )
+            errors.append('Observer %s here that we can\'t identify without a url' % p.name)
+            #player, created = Player.objects.get_or_create(
+            #    username=p.name,
+            #    battle_net_url=p.url
+            #)
+            #result = None
+            #PlayerResult.objects.create(
+            #    match=match,
+            #    player=player,
+            #    result=result,
+            #    is_observer=True,
+            #    color='rgb(%(r)s, %(g)s, %(b)s)' % p.color,
+            #    race=p.play_race,
+            #)
 
         match.processed = True
     except Exception, e:
+        errors.append("Replay Parse Error: %s %s at location %s -- %s" % (
+            e.message,
+            e.code or 'X',
+            e.location,
+            e.type
+        ))
         match.processed = False
-        match.process_error = e
+
+    match.process_error = '\n'.join(errors)
     match.save()

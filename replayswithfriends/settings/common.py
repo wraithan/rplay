@@ -9,6 +9,7 @@ SITE_ROOT = dirname(DJANGO_ROOT)
 SITE_NAME = basename(DJANGO_ROOT)
 
 DEBUG = False
+PROD = False
 TEMPLATE_DEBUG = DEBUG
 
 

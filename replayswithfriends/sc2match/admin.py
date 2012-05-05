@@ -4,7 +4,7 @@ from .tasks import parse_replay
 
 class PlayerResultInline(admin.StackedInline):
     model = PlayerResult
-
+    extra = 0
 
 class PlayerInline(admin.StackedInline):
     model = Player
@@ -16,10 +16,12 @@ class MatchAdmin(admin.ModelAdmin):
         '__unicode__',
         'processed',
         'process_error',
+        'matchhash',
     ]
     readonly_fields = [
         'mapfield',
         'duration',
+        'matchhash',
     ]
     inlines = [PlayerResultInline]
 
@@ -39,9 +41,13 @@ class PlayerResultAdmin(admin.ModelAdmin):
 class PlayerAdmin(admin.ModelAdmin):
     pass
 
+class MapAdmin(admin.ModelAdmin):
+    readonly_fields = [
+        'maphash',
+    ]
 
 
 admin.site.register(PlayerResult, PlayerResultAdmin)
 admin.site.register(Match, MatchAdmin)
-admin.site.register(Map)
+admin.site.register(Map, MapAdmin)
 admin.site.register(Player, PlayerAdmin)

@@ -10,6 +10,7 @@ from S3 import CallingFormat
 from common import *
 
 DEBUG = False
+PROD = True
 
 # Helper lambda for gracefully degrading environmental variables:
 env = lambda e, d: environ[e] if environ.has_key(e) else d
@@ -144,7 +145,7 @@ AWS_CALLING_FORMAT = CallingFormat.SUBDOMAIN
 AWS_ACCESS_KEY_ID = env('AWS_ACCESS_KEY_ID', 'AKIAJ35NWHEJY2Z3VWNQ')
 AWS_SECRET_ACCESS_KEY = env('AWS_SECRET_ACCESS_KEY', '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')
 AWS_STORAGE_BUCKET_NAME = env('AWS_STORAGE_BUCKET_NAME', 'r-play')
-
+AWS_REPLAY_BUCKET_NAME = env('AWS_REPLAY_BUCKET_NAME', 'rplay-sc2')
 
 STATIC_URL = 'https://%s.s3.amazonaws.com/' % AWS_STORAGE_BUCKET_NAME
 MEDIA_URL = 'https://%s.s3.amazonaws.com/' % AWS_STORAGE_BUCKET_NAME

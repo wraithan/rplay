@@ -9,15 +9,15 @@ from django.utils import timezone
 from model_utils import Choices
 from friendship.models import Friend, Follow
 
-#from queued_storage.backends import QueuedS3BotoStorage
+import hashlib
 
-#queued_s3storage = QueuedS3BotoStorage()
-
-#if settings.DEBUG:
-storage_engine = default_storage
-#else:
-#    storage_engine = queued_s3storage
-
+if not settings.PROD:
+    storage_engine = default_storage
+else:
+    print settings.PROD
+    from queued_storage.backends import QueuedS3BotoStorage
+    queued_s3storage = QueuedS3BotoStorage(remote_options={'bucket': getattr(settings, 'AWS_REPLAY_BUCKET_NAME', 'r-play')})
+    storage_engine = queued_s3storage
 
 SHARE = Choices(
     (0, 'PUBLIC', _("Public")),
@@ -84,6 +84,7 @@ class Map(models.Model):
     name = models.CharField(max_length=128)
     image = models.ImageField(upload_to="maps", blank=True, null=True, storage=storage_engine)
     map_file = models.FileField(upload_to="map_files", blank=True, null=True)
+    maphash = models.CharField(max_length=512, editable=False, blank=True, default='')
     region = models.PositiveSmallIntegerField(choices=REGIONS, default=REGIONS.NA)
 
 
@@ -100,11 +101,6 @@ class ProcessedManager(models.Manager):
 
     def errors(self):
         return self.get_query_set().filter(processed=None)
-
-    def process(self):
-        from .tasks import parse_replay
-        for match in self.get_query_set():
-            parse_replay.delay(match.id)
 
 
 class ShareManager(models.Manager):
@@ -132,17 +128,25 @@ class ShareManager(models.Manager):
         return self.get_query_set().filter(match_share=SHARE.FOLLOWERS, owner__in=following)
 
 
+def generate_filename(instance, filename):
+    return "replay_files/%s/%s" % (
+        instance.owner.id,
+        filename
+    )
+
+
 class Match(models.Model):
     owner = models.ForeignKey(User)
     created = models.DateTimeField(default=timezone.now, editable=False)
     modified = models.DateTimeField(editable=False)
-    replay_file = models.FileField(upload_to="replay_files/%Y/%m/%d", storage=storage_engine)
+    replay_file = models.FileField(upload_to=generate_filename, storage=storage_engine)
     mapfield = models.ForeignKey(Map, null=True, editable=False)
     duration = models.PositiveIntegerField(null=True, editable=False)
     gateway = models.CharField(max_length=32, default="us")
     processed = models.NullBooleanField(default=None)
     process_error = models.TextField(blank=True, default='', editable=False)
     match_share = models.PositiveSmallIntegerField(choices=SHARE, default=SHARE.FRIENDS)
+    matchhash = models.CharField(max_length=512, editable=False, blank=True, default='')
 
     objects = models.Manager()
     share = ShareManager()
@@ -157,6 +161,10 @@ class Match(models.Model):
             return "%s" % ", ".join(self.players.all().values_list('player__username', flat=True).order_by("player__username"))
         else:
             return "unprocessed match %s" % self.created
+
+    def process_now(self):
+        from .tasks import parse_replay
+        parse_replay(self.id)
 
     @models.permalink
     def get_absolute_url(self):
@@ -179,6 +187,17 @@ class Match(models.Model):
         else:
             return '-'
 
+    def make_hash(self, block_size=2**8):
+        self.replay_file.open('rb')
+        md5 = hashlib.md5()
+        while True:
+            data = self.replay_file.read(block_size)
+            if not data:
+                break
+            md5.update(data)
+        self.replay_file.close()
+        self.matchhash = md5.hexdigest()
+
     @property
     def winners(self):
         return self.players.filter(result=True)
@@ -189,7 +208,10 @@ class Match(models.Model):
 
     def save(self, *args, **kwargs):
         self.modified = timezone.now()
+        if not self.matchhash:
+            self.make_hash()
         super(Match, self).save(*args, **kwargs)
 
     class Meta:
         ordering = ['-modified']
+        unique_together = ['owner', 'matchhash']
