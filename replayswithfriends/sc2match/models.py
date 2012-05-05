@@ -90,6 +90,22 @@ class Map(models.Model):
     def __unicode__(self):
         return self.name
 
+class ProcessedManager(models.Manager):
+
+    def processed(self):
+        return self.get_query_set().filter(processed=True)
+
+    def unprocessed(self):
+        return self.get_query_set().filter(processed=None)
+
+    def errors(self):
+        return self.get_query_set().filter(processed=None)
+
+    def process(self):
+        from .tasks import parse_replay
+        for match in self.get_query_set():
+            parse_replay.delay(match.id)
+
 
 class ShareManager(models.Manager):
 
@@ -124,11 +140,13 @@ class Match(models.Model):
     mapfield = models.ForeignKey(Map, null=True, editable=False)
     duration = models.PositiveIntegerField(null=True, editable=False)
     gateway = models.CharField(max_length=32, default="us")
-    processed = models.BooleanField(default=False)
+    processed = models.NullBooleanField(default=None)
+    process_error = models.TextField(blank=True, default='', editable=False)
     match_share = models.PositiveSmallIntegerField(choices=SHARE, default=SHARE.FRIENDS)
 
     objects = models.Manager()
     share = ShareManager()
+    processing = ProcessedManager()
 
     def __init__(self, *args, **kwargs):
         self._replay = None
