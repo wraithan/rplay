@@ -3,6 +3,7 @@ from django.core.files.storage import default_storage
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
+from storages.backends.s3boto import S3BotoStorage
 
 import sc2reader
 from django.utils import timezone
@@ -11,13 +12,10 @@ from friendship.models import Friend, Follow
 
 import hashlib
 
-if not settings.PROD:
-    storage_engine = default_storage
+if settings.PROD:
+    storage_engine = S3BotoStorage(bucket='rplay-sc2')
 else:
-    print settings.PROD
-    from queued_storage.backends import QueuedS3BotoStorage
-    queued_s3storage = QueuedS3BotoStorage(remote_options={'bucket': getattr(settings, 'AWS_REPLAY_BUCKET_NAME', 'r-play')})
-    storage_engine = queued_s3storage
+    storage_engine = default_storage
 
 SHARE = Choices(
     (0, 'PUBLIC', _("Public")),
