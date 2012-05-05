@@ -186,14 +186,12 @@ class Match(models.Model):
             return '-'
 
     def make_hash(self, block_size=2**8):
-        self.replay_file.open('rb')
         md5 = hashlib.md5()
         while True:
             data = self.replay_file.read(block_size)
             if not data:
                 break
             md5.update(data)
-        self.replay_file.close()
         self.matchhash = md5.hexdigest()
 
     @property
@@ -206,8 +204,8 @@ class Match(models.Model):
 
     def save(self, *args, **kwargs):
         self.modified = timezone.now()
-        #if not self.matchhash:
-        #    self.make_hash()
+        if not self.matchhash:
+            self.make_hash()
         super(Match, self).save(*args, **kwargs)
 
     class Meta:
