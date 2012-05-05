@@ -22,6 +22,7 @@ class MatchAdmin(admin.ModelAdmin):
         'mapfield',
         'duration',
         'matchhash',
+        'process_error',
     ]
     inlines = [PlayerResultInline]
 
