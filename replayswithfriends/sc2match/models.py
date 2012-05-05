@@ -192,6 +192,7 @@ class Match(models.Model):
             if not data:
                 break
             md5.update(data)
+        data = self.replay_file.seek(0)
         self.matchhash = md5.hexdigest()
 
     @property
