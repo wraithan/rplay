@@ -66,12 +66,15 @@ def parse_replay(match_id):
 
         match.processed = True
     except Exception, e:
-        errors.append("Replay Parse Error: %s %s at location %s -- %s" % (
-            e.message,
-            e.code or 'X',
-            e.location,
-            e.type
-        ))
+        if getattr(e, 'code'):
+            errors.append("Replay Parse Error: %s %s at location %s -- %s" % (
+                e.message,
+                e.code or 'X',
+                e.location,
+                e.type
+            ))
+        else:
+            errors.append(e.message)
         match.processed = False
 
     match.process_error = '\n'.join(errors)
