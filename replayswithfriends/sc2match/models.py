@@ -206,8 +206,8 @@ class Match(models.Model):
 
     def save(self, *args, **kwargs):
         self.modified = timezone.now()
-        if not self.matchhash:
-            self.make_hash()
+        #if not self.matchhash:
+        #    self.make_hash()
         super(Match, self).save(*args, **kwargs)
 
     class Meta:
