@@ -122,7 +122,6 @@ INSTALLED_APPS = [
     'djcelery',
     'friendship',
     'gunicorn',
-    'queued_storage',
     'south',
     'pagination',
 

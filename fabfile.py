@@ -111,7 +111,6 @@ def deploy():
             "Couldn't push your application to Heroku, continue anyway?")
     syncdb()
     migrate()
-    collectstatic()
     compress()
 
 @task

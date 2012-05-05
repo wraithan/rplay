@@ -16,7 +16,6 @@ django-model-utils
 PIL
 lxml
 sorl-thumbnail
-django-queued-storage
 django-pagination
 django-friendship
 
