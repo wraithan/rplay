@@ -6,21 +6,35 @@
 {% block body %}
 <div class="span9">
     <a href="{{ object.replay_file.url }}" class="btn btn-success btn-big"><i class="icon-film icon-white"></i> Download Replay</a>
-    <h3>{{ object.mapfield }} in {{ object.time_display }}</h3>
+    <h3>{{ object.mapfield }} in {{ object.time_display }} </h3>
     <table class="table">
         <tr><th>Outcome</th><th>Player</th><th>Race</th><th>Tags</th></tr>
         {% for p in object.players.all %}
         <tr>
             <td>{% if p.result %}<i class="icon-star" title="win"></i>{% endif %}</td>
-            <td>{{ p.player.username }}</td>
+            <td style="color:{{p.color}}">{{ p.nick }}</td>
             <td>{{ p.race }}</td>
             <td>
                 {% if p.is_observer %}<i class="icon-eye-open" title="observer"></i>{% endif %}
-                {% if p.random %}<i class="icon-question-sign" title="random"></i>{% endif %}
+                {% if p.random %}<i class="icon-random" title="random"></i>{% endif %}
             </td>
         </tr>
         {% endfor %}
     </table>
+    {% if object.messages.all %}
+    <h5>Match Chatter</h5>
+    <table class="table">
+        <tr><th>Time</th><th>To</th><th>Player</th><th>Message</th></tr>
+        {% for m in object.messages.all %}
+        <tr>
+            <td>{{ m.time_display }}</td>
+            <td>{% if m.to_all %}<i class="icon-globe" title="all"></i>{% else %}<i class="icon-person" title="team"></i><i class="icon-person" title="team"></i>{% endif %}</td>
+            <td style="color:{{m.player.color}}">{{ m.player.nick }}</td>
+            <td>{{ m.message }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% endif %}
 </div>
 <div class="span3">
 </div>

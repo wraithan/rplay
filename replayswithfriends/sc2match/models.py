@@ -55,6 +55,7 @@ class PlayerResult(models.Model):
         ("terran", _("Terran")),
         ("protoss", _("Protoss")),
         ("zerg", _("Zerg")),
+        ("observer", _("Observer")),
     )
 
     RESULTS = Choices(
@@ -63,12 +64,17 @@ class PlayerResult(models.Model):
         (False, _("Loss")),
     )
 
-    player = models.ForeignKey(Player, related_name="matches")
+    player = models.ForeignKey(Player, related_name="matches", null=True)
+    nick = models.CharField(max_length=64, default='', blank=True)
+    pid = models.PositiveSmallIntegerField(default=0)
+    is_human = models.BooleanField(default=True)
+    difficulty = models.CharField(max_length=64, blank=True, default='')
+    handicap = models.PositiveSmallIntegerField(default=100)
     match = models.ForeignKey('Match', related_name="players")
     result = models.NullBooleanField(default=None, choices=RESULTS)
     color = models.CharField(max_length=32)
     random = models.BooleanField(default=False)
-    race = models.CharField(choices=RACES, max_length=8)
+    race = models.CharField(choices=RACES, max_length=8, blank=True)
     is_observer = models.BooleanField(default=False)
 
     @property
@@ -82,12 +88,37 @@ class Map(models.Model):
     name = models.CharField(max_length=128)
     image = models.ImageField(upload_to="maps", blank=True, null=True, storage=storage_engine)
     map_file = models.FileField(upload_to="map_files", blank=True, null=True)
-    maphash = models.CharField(max_length=512, editable=False, blank=True, default='')
+    url = models.URLField(editable=False, blank=True, default='')
     region = models.PositiveSmallIntegerField(choices=REGIONS, default=REGIONS.NA)
 
 
     def __unicode__(self):
         return self.name
+
+
+class MatchMessage(models.Model):
+    match = models.ForeignKey("Match", related_name="messages")
+    player = models.ForeignKey("PlayerResult")
+    frame = models.PositiveIntegerField(default=0)
+    flags = models.IntegerField(default=0)
+    to_all = models.BooleanField(default=True)
+    to_allies = models.BooleanField(default=True)
+    message = models.TextField()
+
+    class Meta:
+        ordering = ['match', 'frame']
+
+    @property
+    def time_display(self):
+        if self.frame:
+            minutes = self.frame / (60*16)
+            seconds = self.duration % (60 * 16)
+            if seconds < 10:
+                seconds = "0%s" % seconds
+            return '%s:%s' % (minutes, seconds)
+        else:
+            return '-'
+
 
 class ProcessedManager(models.Manager):
 
@@ -145,6 +176,11 @@ class Match(models.Model):
     process_error = models.TextField(blank=True, default='', editable=False)
     match_share = models.PositiveSmallIntegerField(choices=SHARE, default=SHARE.FRIENDS)
     matchhash = models.CharField(max_length=512, editable=False, blank=True, default='')
+    is_ladder = models.BooleanField(default=True)
+    game_played_on = models.DateTimeField(null=True, blank=True)
+    game_type = models.CharField(max_length=64, blank=True, default=True)
+    game_speed = models.CharField(max_length=64, blank=True, default=True)
+
 
     objects = models.Manager()
     share = ShareManager()
@@ -156,7 +192,7 @@ class Match(models.Model):
 
     def __unicode__(self):
         if self.processed:
-            return "%s" % ", ".join(self.players.all().values_list('player__username', flat=True).order_by("player__username"))
+            return "%s" % ", ".join(self.players.all().values_list('nick', flat=True).order_by("nick"))
         else:
             return "unprocessed match %s" % self.created
 
@@ -171,7 +207,7 @@ class Match(models.Model):
     @property
     def replay(self):
         if not self._replay:
-            self._replay = sc2reader.load_replay(self.replay_file.file)
+            self._replay = sc2reader.load_replay(self.replay_file.file, load_map=True)
         return self._replay
 
     @property
@@ -210,5 +246,5 @@ class Match(models.Model):
         super(Match, self).save(*args, **kwargs)
 
     class Meta:
-        ordering = ['-modified']
+        ordering = ['-game_played_on', '-modified']
         unique_together = ['owner', 'matchhash']

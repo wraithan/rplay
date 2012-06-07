@@ -27,13 +27,13 @@ class PlayerList(ListView):
             return Player.objects.filter(match__in=Match.share.public())
 
 class MatchView(DetailView):
-    queryset = Match.share.all()
+    queryset = Match.share.all().select_related('playerresult', 'playerresult__player', 'message')
 
     def get_queryset(self):
         if self.request.user.is_authenticated():
-            return Match.share.available(self.request.user)
+            return Match.share.available(self.request.user).select_related('playerresult', 'playerresult__player', 'message')
         else:
-            return Match.share.public()
+            return Match.share.public().select_related('playerresult', 'playerresult__player', 'message')
 
 class MatchList(ListView):
     queryset = Match.share.all()

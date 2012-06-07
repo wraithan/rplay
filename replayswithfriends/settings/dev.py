@@ -9,6 +9,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 INSTALLED_APPS += [
     'debug_toolbar',
+    'devserver',
     'djkombu',
 ]
 
@@ -18,7 +19,7 @@ MIDDLEWARE_CLASSES += [
 
 CELERY_RESULT_DBURI = DATABASES['default']
 BROKER_BACKEND = "djkombu.transport.DatabaseTransport"
-CELERY_ALWAYS_EAGER = True
+CELERY_ALWAYS_EAGER = False
 
 INTERNAL_IPS = ('127.0.0.1',)
 DEBUG_TOOLBAR_PANELS = [
