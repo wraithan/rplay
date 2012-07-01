@@ -21,6 +21,6 @@ django-friendship
 
 
 https://github.com/toastdriven/django-tastypie/tarball/master
--e git+https://github.com/issackelly/django-redis-cache.git#egg=django_redis_cache
--e git+https://github.com/GraylinKim/sc2reader.git@6b540c27999dd06f06dbd16550ea5a0a54fdedc1#egg=sc2reader
+https://github.com/issackelly/django-redis-cache.git/tarball/master
+https://github.com/GraylinKim/sc2reader.git/tarball/master
 -e hg+https://bitbucket.org/ubernostrum/django-registration#egg=django_registration
