@@ -124,6 +124,7 @@ INSTALLED_APPS = [
     'gunicorn',
     'south',
     'pagination',
+    'registration',
 
     'replayswithfriends.profiles',
     'replayswithfriends.sc2match',
