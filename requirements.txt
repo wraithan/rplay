@@ -20,7 +20,7 @@ django-pagination
 django-friendship
 
 
--e git+git@github.com:toastdriven/django-tastypie.git#egg=django_tastypie-dev
--e git+git@github.com:issackelly/django-redis-cache.git#egg=django_redis_cache
--e git+https://github.com/GraylinKim/sc2reader.git#egg=sc2reader
+http://github.com/toastdriven/django-tastypie/tarball/master
+http://github.com/issackelly/django-redis-cache/tarball/master
+https://github.com/GraylinKim/sc2reader/tarball/master
 -e hg+https://bitbucket.org/ubernostrum/django-registration#egg=django_registration
