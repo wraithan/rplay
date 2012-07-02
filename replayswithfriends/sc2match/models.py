@@ -207,7 +207,7 @@ class Match(models.Model):
     @property
     def replay(self):
         if not self._replay:
-            self._replay = sc2reader.load_replay(self.replay_file.file, load_map=True)
+            self._replay = sc2reader.load_replay(self.replay_file.file, load_map=False)
         return self._replay
 
     @property
