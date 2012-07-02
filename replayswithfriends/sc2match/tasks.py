@@ -3,7 +3,7 @@ from .models import Player
 from celery.task import task
 import datetime
 from sc2reader.events import PlayerActionEvent
-from sc2reader.exceptions import ReadError
+from sc2reader.exceptions import ReadError, FileError
 
 
 def as_signal(sender, instance, created, raw, **kwargs):
@@ -33,7 +33,10 @@ def parse_replay(match_id):
         match.proces_error = x
         match.save()
         return False
-
+    except FileError, x:
+        match.proces_error = x
+        match.save()
+        return False
 
     match.duration = match.replay.game_length.seconds
     match.gateway = match.replay.gateway
