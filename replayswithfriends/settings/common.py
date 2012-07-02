@@ -152,6 +152,11 @@ LOGGING = {
         }
     },
     'loggers': {
+        'django.request.tastypie': {
+            'level': 'DEBUG',
+            'handlers': ['console'],
+            'propagate': False
+        },
         'django.db.backends': {
             'level': 'ERROR',
             'handlers': ['console'],
