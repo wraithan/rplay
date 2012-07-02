@@ -18,7 +18,7 @@ env = lambda e, d: environ[e] if environ.has_key(e) else d
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = env('EMAIL_HOST', 'smtp.gmail.com')
 EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD', '')
-EMAIL_HOST_USER = env('EMAIL_HOST_USER', 'your_email@example.com')
+EMAIL_HOST_USER = env('EMAIL_HOST_USER', 'formsender@servee.com')
 EMAIL_PORT = env('EMAIL_PORT', 587)
 EMAIL_SUBJECT_PREFIX = '[%s] ' % SITE_NAME
 EMAIL_USE_TLS = True if env('EMAIL_USE_TLS', 'True') == 'True'  else False

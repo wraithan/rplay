@@ -130,6 +130,7 @@ INSTALLED_APPS = [
     'replayswithfriends.sc2match',
 ]
 
+ACCOUNT_ACTIVATION_DAYS = 7
 
 LOGGING = {
     'version': 1,
