@@ -13,7 +13,7 @@ DEBUG = False
 PROD = True
 
 # Helper lambda for gracefully degrading environmental variables:
-env = lambda e, d: environ[e] if environ.has_key(e) else d
+env = lambda e, d: environ[e] if e in environ else d
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = env('EMAIL_HOST', 'smtp.gmail.com')
@@ -32,7 +32,7 @@ uses_netloc.append('postgres')
 uses_netloc.append('mysql')
 
 try:
-    if environ.has_key('DATABASE_URL'):
+    if 'DATABASE_URL' in environ:
         url = urlparse(environ['DATABASE_URL'])
         DATABASES['default'] = {
             'NAME': url.path[1:],
