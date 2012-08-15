@@ -6,6 +6,7 @@ boto==2.3.0
 django-celery-with-redis
 django-compressor==1.1.2
 django-debug-toolbar==0.9.4
+django-devserver==0.3.2
 django-htmlmin==0.5.1
 django-kombu==0.9.4
 django-storages==1.1.4
