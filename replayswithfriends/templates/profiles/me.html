@@ -1,0 +1,52 @@
+{% extends "site_base.html" %}
+{% load staticfiles %}
+{% load url from future %}
+
+{% block head_title %}{{ object }} {{ block.super }}{% endblock %}
+
+{% block body %}
+<div class="span9">
+    <h1>{{ profile.user.username }}</h1>
+    <h3>Most Played Race: {{ most_played_race.0.race }} : {{ most_played_race.0.race_count }}</h3>
+
+    <p>Career Uploaded<br/>
+    {{ wins.count }} wins<br/>
+    {{ losses.count}} losses<br/>
+    {{ draws.count }} draws
+    </p>
+    <p>Best Maps</br>
+        <ul>
+        {% for map in best_maps %}
+        <li>{{ map.match__mapfield__name }}: {{ map.wins }}
+        {% endfor %}
+        </ul>
+    </p>
+    <p>Worst Maps</br>
+        <ul>
+        {% for map in worst_maps %}
+        <li>{{ map.match__mapfield__name }}: {{ map.losses }}
+        {% endfor %}
+        </ul>
+    </p>
+    <p>Wins Against:
+        <ul>{% for race in  beat_you %}
+            {% if race.race != 'observer' %}
+            <li>{{ race.race }}: {{ race.race_count }}
+            {% endif %}{% endfor %}</ul></p>
+    <p>Losses Against:
+        <ul>{% for race in  you_win %}
+            {% if race.race != 'observer' %}
+            <li>{{ race.race }}: {{ race.race_count }}
+            {% endif %}{% endfor %}</ul></p>
+
+</div>
+<div class="span3">
+    {% if possible_players %}
+    <h3>Is one of these you?<h3>
+        {% for player in possible_players %}
+            <a href="{% url "claim_player" %}?player={{ player.pk }}" class="btn">{{ player.username }}</a>
+        {% endfor %}
+    {% endif %}
+</div>
+
+{% endblock %}
