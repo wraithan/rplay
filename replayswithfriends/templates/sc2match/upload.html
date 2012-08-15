@@ -25,6 +25,14 @@
 <div class="span9">
     <h1>Upload Matches</h1>
     <div id="queue"></div>
+    <div id="osx-replay-location">
+      <p>On OSX your replays are located by default in:</p>
+      <code>/Users/&lt;username&gt;/Library/Application Support/Blizzard/StarCraft II/Accounts/&lt;randomnumber&gt;/&lt;randomstring&gt;/Replays/</code>
+    </div>
+    <div id="windows-replay-location">
+      <p>On Windows your replays are located by default in:</p>
+      <code>C:\Users\&lt;username&gt;\Documents\Starcraft II\Accounts\&lt;randomnumber&gt;\&lt;randomstring&gt;\Replays</code>
+    </div>
     <form method="POST" action="." class="form-horizontal" id="uploadform" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="form-actions">
