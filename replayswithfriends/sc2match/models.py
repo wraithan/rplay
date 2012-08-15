@@ -215,9 +215,7 @@ class Match(models.Model):
         if self.duration:
             minutes = self.duration / 60
             seconds = self.duration % 60
-            if seconds < 10:
-                seconds = "0%s" % seconds
-            return '%s:%s' % (minutes, seconds)
+            return '%d:%02d' % (minutes, seconds)
         else:
             return '-'
 
