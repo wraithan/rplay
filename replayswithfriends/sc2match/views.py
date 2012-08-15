@@ -7,6 +7,9 @@ from .forms import MatchUploadForm
 
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
+from sc2reader.events import *
+import json
+
 
 class PlayerDetail(DetailView):
     queryset = Player.objects.all()

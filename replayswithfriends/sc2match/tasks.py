@@ -2,9 +2,9 @@ from .models import PlayerResult, Map, Match, MatchMessage
 from .models import Player
 from celery.task import task
 import datetime
-from sc2reader.events import PlayerActionEvent
+from sc2reader.events import *
 from sc2reader.exceptions import ReadError, FileError
-
+import json
 
 def as_signal(sender, instance, created, raw, **kwargs):
     if created:
@@ -42,13 +42,69 @@ def parse_replay(match_id):
     match.gateway = match.replay.gateway
     match.is_ladder = match.replay.is_ladder
 
-    el = []
+    events = []
     for e in match.replay.events:
-        if isinstance(e, PlayerActionEvent):
-            try:
-                print str(e)
-            except Exception, x:
-                print x
+        event = {
+            "pid": e.pid,
+            "frame": e.frame,
+            "second": e.second,
+            "name": e.name,
+            "text": str(e),
+        }
+        if isinstance(e, GameEvent):
+            event.update({
+                'type': e.type,
+                'code': e.code,
+                'is_local': e.is_local,
+                'is_init': e.is_init,
+                'is_player_action': e.is_player_action,
+                'is_camera_movement': e.is_camera_movement,
+                'is_unknown': e.is_unknown,
+            })
+        if isinstance(e, MessageEvent):
+            event.update({
+                'type': 'MessageEvent',
+                'flags': e.flags,
+            })
+        if isinstance(e, ChatEvent):
+            event.update({
+                'target': e.target,
+                'text': e.text,
+                'to_all': e.to_all,
+                'to_allies': e.to_allies,
+            })
+        if isinstance(e, PacketEvent):
+            event['data'] = e.data
+        if isinstance(e, PingEvent):
+            event.update({'x': e.x, 'y': e.y})
+        if isinstance(e, ResourceTransferEvent):
+            event.update({
+                'sender': e.sender,
+                'receiver': e.receiver,
+                'minerals': e.minerals,
+                'vespene': e.vespene,
+            })
+        if isinstance(e, AbilityEvent):
+            event['ability_code'] = e.ability_code
+            event['ability_text'] = e.ability
+        if isinstance(e, TargetAbilityEvent):
+            event['target_string'] = str(e.target)
+        if isinstance(e, LocationAbilityEvent):
+            event['location'] = str(e.location)
+        if isinstance(e, HotkeyEvent):
+            event.update({
+                'hotkey': e.hotkey,
+                'deselect': e.deselect,
+            })
+        if isinstance(e, SelectionEvent):
+            event.update({
+                'bank': e.bank,
+                'objects': [str(x) for x in e.objects],
+                'deselect': e.deselect
+            })
+        events.append(event)
+
+    match.events_json = json.dumps(events)
 
     match.game_played_on = datetime.datetime.fromtimestamp(int(match.replay.unix_timestamp))
     try:

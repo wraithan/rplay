@@ -3,6 +3,59 @@
 
 {% block head_title %}{{ object }} {{ block.super }}{% endblock %}
 
+{% block styles %}
+{{ block.super }}
+<style>
+{% for p in object.players.all %}
+.player_{{ p.pid }}_block {
+    background-color: {{ p.color }};
+}
+.player_{{ p.pid }}_text {
+    color: {{ p.color }};
+}
+.player_{{ p.pid }}_svg {
+    fill: {{ p.color }};
+}
+{% endfor %}
+
+.player_16_text {
+    color: #555555;
+}
+.player_16_svg {
+    fill: #555555;
+}
+.player_16_block {
+    background-color: #555555;
+}
+
+.eventtype_3, .eventtype_MessageEvent {
+    display: none;
+}
+
+svg {
+    height: 200px;
+}
+#workergraph svg {
+    height: 80px;
+}
+
+.infobox {
+    position: absolute;
+    width: 200px;
+    padding: 10px;
+    background-color: rgba(255,255,255,.95);
+    border: 1px solid #999;
+    display: none;
+}
+
+.upgrade {
+    stroke: black;
+    z: 999;
+}
+
+</style>
+{% endblock %}
+
 {% block body %}
 <div class="span9">
     <a href="{{ object.replay_file.url }}" class="btn btn-success btn-big"><i class="icon-film icon-white"></i> Download Replay</a>
@@ -25,7 +78,7 @@
     <h5>Match Chatter</h5>
     <table class="table">
         <tr><th>Time</th><th>To</th><th>Player</th><th>Message</th></tr>
-        {% for m in object.messages.all %}
+        {% for m in object.messages.all reversed %}
         <tr>
             <td>{{ m.time_display }}</td>
             <td>{% if m.to_all %}<i class="icon-globe" title="all"></i>{% else %}<i class="icon-person" title="team"></i><i class="icon-person" title="team"></i>{% endif %}</td>
@@ -36,6 +89,226 @@
     </table>
     {% endif %}
 </div>
-<div class="span3">
+<div class="span9">
+    <h5>Actions</h5>
 </div>
+<div class="span9" id="eventsgraph">
+</div>
+<div class="span9">
+    <h5>Workers Created</h5>
+</div>
+<div class="span9" id="workergraph">
+</div>
+
+<div class="infobox">
+    <p>Here is where we will say something.</p>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ block.super }}
+<script src="http://d3js.org/d3.v2.js"></script>
+<script>
+var match_events = {{ object.events_json|safe }};
+
+var frame_scale = d3.scale.linear()
+    .domain([
+        0,
+        d3.max(match_events, function(m){ return m.frame})
+    ])
+    .range([
+        2,
+        850
+    ])
+
+var seconds = {}
+var workers = []
+var workers_seconds = {}
+
+
+for (var e in match_events){
+    var evt = match_events[e];
+    if (typeof(seconds[evt.second]) === "undefined"){
+        seconds[evt.second] = {
+            "__all__": [],
+            "p1": [],
+            "p2": [],
+            "p16": [],
+        }
+    }
+
+    if ((evt.ability_code === 0x10d00) ||  // SCV
+        (evt.ability_code === 0x13300) ||  // DRONE
+       (evt.ability_code === 0x12100) // PROBE
+    )
+    {
+        if(typeof(workers_seconds[evt.second] === 'undefined')) {
+            workers_seconds[evt.second] = {
+                "__all__": [],
+                "p1": [],
+                "p2": [],
+            }
+        }
+        workers.push(evt);
+        workers_seconds[evt.second]['__all__'].push(evt);
+        workers_seconds[evt.second]['p'+evt.pid].push(evt);
+    }
+
+    seconds[evt.second]['__all__'].push(evt)
+    seconds[evt.second]['p'+evt.pid].push(evt)
+}
+
+
+var is_upgrade = function(d){
+    return [
+        //class EngineeringBay(TerranBuilding, Research):,
+        0x11400,
+        0x11401,
+        0x11402,
+        0x11403,
+        0x11404,
+        0x11405,
+        0x11406,
+        0x11407,
+        0x11408,
+        //class Armory(TerranBuilding, Research):,
+        0x11b02,
+        0x11b03,
+        0x11b04,
+        0x11b05,
+        0x11b06,
+        0x11b07,
+        0x11b08,
+        0x11b09,
+        0x11b0a,
+        0x11b0b,
+        0x11b0c,
+        0x11b0d,
+        //class Forge(Research):
+        0x12600,
+        0x12601,
+        0x12602,
+        0x12603,
+        0x12604,
+        0x12605,
+        0x12606,
+        0x12607,
+        0x12608,
+        //class CyberneticsCore(Research):
+        0x15e00,
+        0x15e01,
+        0x15e02,
+        0x15e03,
+        0x15e04,
+        0x15e05,
+        0x15e06,
+        0x15e07,
+        0x15e09,
+        //class EvolutionChamber(Research):
+        0x12b00,
+        0x12b01,
+        0x12b02,
+        0x12b03,
+        0x12b04,
+        0x12b05,
+        0x12b06,
+        0x12b07,
+        0x12b08,
+        //class Spire(Research):
+        0x13200,
+        0x13201,
+        0x13202,
+        0x13203,
+        0x13204,
+        0x13205
+    ].indexOf(d.ability_code) !== -1
+}
+
+d3.select("#eventsgraph")
+    .on("mousemove", function(){
+        // save selection of infobox so that we can later change it's position
+        var infobox = d3.select(".infobox");
+        // this returns x,y coordinates of the mouse in relation to our svg canvas
+        var coord = d3.svg.mouse(this)
+        // now we just position the infobox roughly where our mouse is
+        infobox.style("left", (coord[0] + 15) + $(this).position().left  + "px" );
+        infobox.style("top", (coord[1]) + $(this).position().top + "px");
+    })
+    .append("svg")
+    .selectAll("circle")
+    .data(match_events)
+    .enter()
+    .append("circle")
+    .attr("cx", function(d){
+        return frame_scale(d.frame)
+    })
+    .attr("r", function(d){
+        if (is_upgrade(d)) {
+            console.log('its an upgrade')
+            return 6
+        } return 2
+    })
+    .attr("cy", function(d){
+        var y = (seconds[d.second]['p'+d.pid].indexOf(d) * 4) + 3
+
+        if(d.pid % 2) { y = y * -1 }
+        return y + 100;
+    })
+    .attr("class", function(d){
+        classes = []
+        classes.push("player_" + d.pid + "_svg")
+        classes.push("eventtype_" + d.type)
+        classes.push("ability_" + d.ability_code)
+
+        if(is_upgrade(d)){
+            classes.push("upgrade")
+        }
+
+        return classes.join(" ")
+    }).on("mouseover", function(d){
+        var circle = d3.select(this);
+        circle.attr("stroke", "1px solid black" );
+
+        // show infobox div on mouseover.
+        // block means sorta "render on the page" whereas none would mean "don't render at all"
+        d3.select("p").text(d.text);
+        d3.select(".infobox").style("display", "block");
+        // add test to p tag in infobox
+    }).on("mouseout", function(){
+        var circle = d3.select(this);
+        circle.attr("stroke", "0px");
+
+        // display none removes element totally, whereas visibilty in last example just hid it
+        d3.select(".infobox").style("display", "none");
+    })
+
+
+
+
+//// WORKERS
+d3.select("#workergraph")
+    .append("svg")
+    .selectAll("circle")
+    .data(workers)
+    .enter()
+    .append("circle")
+    .attr("cx", function(d){
+        return frame_scale(d.frame)
+    })
+    .attr("r", 5)
+    .attr("cy", function(d){
+        var y = (workers_seconds[d.second]['p'+d.pid].indexOf(d) * 10) + 15
+        if(d.pid % 2) { y = y * -1 }
+        return y + 20;
+    })
+    .attr("class", function(d){
+        classes = []
+        classes.push("player_" + d.pid + "_svg")
+        classes.push("eventtype_" + d.type)
+        return classes.join(" ")
+    })
+
+
+</script>
+
 {% endblock %}

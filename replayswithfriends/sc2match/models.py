@@ -180,7 +180,7 @@ class Match(models.Model):
     game_played_on = models.DateTimeField(null=True, blank=True)
     game_type = models.CharField(max_length=64, blank=True, default=True)
     game_speed = models.CharField(max_length=64, blank=True, default=True)
-
+    events_json = models.TextField(editable=False, blank=True)
 
     objects = models.Manager()
     share = ShareManager()
