@@ -10,6 +10,9 @@ class Migration(DataMigration):
     def forwards(self, orm):
         "Write your forwards methods here."
         # add the hashes
+        if not Match.objects.exists():
+            return
+
         for m in Match.objects.all():
             try:
                 m.save()
