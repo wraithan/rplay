@@ -12,8 +12,8 @@ This project was started by and so far mostly written by `Issac Kelly`_, I
 (`Wraithan`_) have taken over this project due to time constraints on Issac and
 hope to carry it forward.
 
-.. `Issac Kelly`: http://www.issackelly.com/
-.. `Wraithan`: http://blog.wraithan.net/
+.. _`Issac Kelly`: http://www.issackelly.com/
+.. _`Wraithan`: http://blog.wraithan.net/
 
 
 If you have ideas for data that would be useful to you for determining what you
