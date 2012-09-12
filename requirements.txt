@@ -1,27 +1,29 @@
-Django==1.4
-Fabric==1.4.1
-South==0.7.4
+Django==1.4.1
+Fabric==1.4.3
+PIL==1.1.7
+South==0.7.6
 Sphinx==1.1.3
-boto==2.3.0
-django-celery-with-redis
-django-compressor==1.1.2
+boto==2.5.2
+celery==3.0.9
+django-celqery==3.0.9
+django-celery-with-redis==3.0
+django-compressor==1.2
 django-debug-toolbar==0.9.4
 django-devserver==0.3.2
-django-htmlmin==0.5.1
+django-friendship==0.8.1
+django-htmlmin==0.5.2
 django-kombu==0.9.4
-django-storages==1.1.4
-gunicorn==0.14.2
-psycopg2==2.4.2
-raven==1.7.5
-django-model-utils
-PIL
-lxml
-sorl-thumbnail
-django-pagination
-django-friendship
+django-model-utils==1.1.0
+django-pagination==1.0.7
+django-storages==1.1.5
+gunicorn==0.14.6
+lxml==3.0alpha2
+psycopg2==2.4.5
+raven==2.0.5
+redis==2.6.2
+sorl-thumbnail==11.12
 
-
--e git+https://github.com/toastdriven/django-tastypie.git@perms#egg=django_tastypie-dev
--e git+https://github.com/issackelly/django-redis-cache.git#egg=django_redis_cache
--e git+https://github.com/issackelly/sc2reader.git#egg=sc2reader
--e hg+https://bitbucket.org/ubernostrum/django-registration#egg=django_registration
+-e git+https://github.com/toastdriven/django-tastypie.git@c4e7d86000ab45cf40db08bf489ad9a01f1e9ffc#egg=django_tastypie-dev
+-e git+https://github.com/issackelly/django-redis-cache.git@242ec4067ffd26d0480cd02f801951884ae3f845#egg=django_redis_cache-dev
+-e git+https://github.com/issackelly/sc2reader.git@1e84fa560399f0a2e8d24a436997b0afc57ea195#egg=sc2reader-dev
+-e hg+https://bitbucket.org/ubernostrum/django-registration@27bccd108cdef30dc0a91ed1968be17bb1e60da4#egg=django_registration-dev
