@@ -92,7 +92,7 @@ MIDDLEWARE_CLASSES = [
     'raven.contrib.django.middleware.Sentry404CatchMiddleware',
 ]
 
-SENTRY_DSN = 'https://783890b5ea754868bbb54dad7632285a:56827db1f54345978e06573aa9755b24@app.getsentry.com/671'
+SENTRY_DSN = ''
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': True,
